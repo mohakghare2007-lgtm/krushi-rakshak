@@ -50,6 +50,7 @@ import sqlite3
 import random
 import uuid
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from flask import Flask, request, jsonify, render_template, g
 from PIL import Image
@@ -324,7 +325,7 @@ def detect():
         (
             report_id, filename, crop_name, disease_info["name"], confidence,
             risk_level, advice_text, latitude, longitude, location_name,
-            datetime.utcnow().isoformat(),
+            datetime.now(ZoneInfo("Asia/Kolkata")).isoformat(),
         ),
     )
     db.commit()
@@ -400,7 +401,11 @@ def feedback():
     )
     db.execute(
         "INSERT INTO feedback_log (report_id, was_correct, created_at) VALUES (?, ?, ?)",
-        (report_id, 1 if was_correct else 0, datetime.utcnow().isoformat()),
+        (
+    report_id,
+    1 if was_correct else 0,
+    datetime.now(ZoneInfo("Asia/Kolkata")).isoformat()
+),
     )
     db.commit()
     return jsonify({"status": "feedback recorded"})
